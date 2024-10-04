@@ -1,0 +1,1434 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: e-commerce
+  description: |-
+    this site allows the user to buy anything he needs. Offers fast and easy delivery.  
+
+tags:
+  - name: "login"
+    description: "Endpoints for logging in"
+  - name: "registration"
+  - name: "User"
+    description: "User specification"
+  - name: "payment"
+    description: "payment methods"
+  - name: "item"
+    description: "item specification"
+  - name: "favorites"
+    description: "favorites specification"
+  - name: "cart"
+    description: "cart specificies"
+  - name: "user profile"
+    description: "user profile specification"
+  - name: "home page"
+    description: "home page specification"
+  - name: "review"
+    description: "review specification"
+  - name: "category"
+    description: "category specification"
+  - name: "order"
+    description: "order specification"
+  - name: "courier"
+    description: "courier specification"
+
+
+paths:
+  /login_user:
+    post:
+      tags: 
+       - login
+      summary: Logs in the user
+      description: |-
+        If the user exists, the user identifier is returned.
+      operationId: doLoginUser
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema: 
+              {$ref: '#/components/schemas/User'}
+      responses:
+        '201':
+          description: User log-in action successful
+          content:
+            application/json:
+              schema:
+                description: User identifier
+                type: object
+                properties:
+                  identifier:
+                    description: The user numeric indentifier
+                    type: integer
+                    example: 1
+
+  /login_shop:
+    post:
+      tags: 
+       - login
+      summary: Logs in the shop
+      description: |-
+        If the shop exists, the user identifier is returned.
+      operationId: doLoginShop
+      requestBody:
+        description: shop details
+        content:
+          application/json:
+            schema: 
+              {$ref: '#/components/schemas/Shop'}
+      responses:
+        '201':
+          description: User log-in action successful
+          content:
+            application/json:
+              schema:
+                description: User identifier
+                type: object
+                properties:
+                  identifier:
+                    description: The user numeric indentifier
+                    type: integer
+                    example: 1
+                  
+  /login_admin:
+    post:
+      tags: 
+       - login
+      summary: Logs in the shop
+      description: |-
+        If the shop exists, the user identifier is returned.
+      operationId: doLoginAdmin
+      requestBody:
+        description: admin details
+        content:
+          application/json:
+            schema: 
+              {$ref: '#/components/schemas/Admin'}
+      responses:
+        '201':
+          description: Admin log-in action successful
+          content:
+            application/json:
+              schema:
+                description: Admin identifier
+                type: object
+                properties:
+                  identifier:
+                    description: The admin numeric indentifier
+                    type: integer
+                    example: 1
+
+  /registration_user:
+    post:
+      tags:
+        - registration
+      summary: register a new user
+      description: |-
+        If the user does exist, return message error
+        If the user not exists, the user identifier is returned.
+      operationId: doRegisterUser
+      requestBody:
+        description: User details
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/User'}
+      responses:
+        '201':
+          description: User registration action successful
+          content:
+            application/json:
+              schema:
+                description: User identifier
+                type: object
+                properties:
+                  identifier:
+                    description: The user numeric indentifier
+                    type: integer
+                    example: 1
+  /registration_shop:
+    post:
+      tags:
+        - registration
+      summary: register a new shop
+      description: |-
+        If the shop does exist, return message error
+        If the shop not exists, the user identifier is returned.
+      operationId: doRegisterShop
+      requestBody:
+        description: Shop details
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/Shop'}
+      responses:
+        '201':
+          description: Shop registration action successful
+          content:
+            application/json:
+              schema:
+                description: Shop identifier
+                type: object
+                properties:
+                  identifier:
+                    description: The shop numeric indentifier
+                    type: integer
+                    example: 1
+
+  /registration_courier:
+    post:
+      tags:
+        - registration
+      summary: register a new courier
+      description: |-
+        If the courier does exist, return message error
+        If the courier not exists, the user identifier is returned.
+      operationId: doRegisterCourier
+      requestBody:
+        description: courier details
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/courier'}
+      responses:
+        '201':
+          description: Shop registration action successful
+          content:
+            application/json:
+              schema:
+                description: Shop identifier
+                type: object
+                properties:
+                  identifier:
+                    description: The shop numeric indentifier
+                    type: integer
+                    example: 1
+
+  /users/{user_name}/payment:
+    parameters:
+      - name: user_name
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: '#/components/schemas/methodPayment'}
+
+    post:
+      security:
+        - bearerAuth : []
+      tags: 
+        - payment
+      summary: add payment
+      operationId: addPayment
+      description: |-
+        add a new method payment
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/methodPayment' }
+      responses:
+        "201":
+          description: method payment upload successfully
+          content:
+            application/json:
+              schema: 
+                description: method payment identifier
+                type: object
+                properties:
+                  identifier:
+                    description: The method payment numeric indentifier
+                    type: integer
+                    example: 1
+
+  /users/{username}/payment/{paymentid}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: User id
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: paymentid
+        in: path
+        required: true
+        description: payment id
+        schema: {$ref: '#/components/schemas/methodPayment/properties/id'}
+
+    put:
+      security:
+        - bearerAuth: []
+      tags: 
+        - payment
+      summary: add method payment to user
+      description: |
+        This endpoint is used to add payment to user
+      operationId: addMethodPaymentToUser
+      responses:
+        "204":
+          description: method payment delete
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - payment
+      summary: remove method payment
+      description: |
+        This endpoint is used to delete a payment method
+      operationId: removeMethodPaymentToUser
+      responses:
+        "204":
+          description: method payment delete
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /shop/{user_name}/item:
+    parameters:
+      - name: user_name
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: '#/components/schemas/Shop/properties/id'}
+
+    post:
+      security:
+        - bearerAuth : []
+      tags: 
+        - item
+      summary: add item
+      operationId: addItem
+      description: |-
+        add a new item
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/item' }
+      responses:
+        "201":
+          description: method payment upload successfully
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/item' }
+
+  /users/{username}/item/{itemid}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: User id
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - item
+      summary: remove item 
+      description: |
+        This endpoint is used to delete an item
+      operationId: deeleteItem
+      responses:
+        "204":
+          description: item delete
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/item/{itemid}/favorite/{favoriteid}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user name
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+      - name: favoriteid
+        in: path
+        required: true
+        description: user username that receives like
+        schema: {$ref: "#/components/schemas/item/properties/id"}
+   
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - favorites
+      summary: unfavorite item
+      description: |
+        This endpoint is used to unbookmark an article
+      operationId: unFavoriteItem
+      responses:
+        "204":
+          description: favorite removed
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/item/{itemid}/favorite:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user name
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+
+    put:
+      security:
+        - bearerAuth: []
+      tags: 
+        - favorites
+      summary: favorite item
+      description: |
+        This endpoint is used to bookmark an article
+      operationId: favoriteItem
+      responses:
+        "200":
+          description: Utente bannato con successo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/favorite' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{courierid}/order/{orderid}/item/{itemid}:
+    parameters: 
+      - name: courierid
+        in: path
+        required: true
+        description: user name
+        schema: {$ref: "#/components/schemas/courier/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+      - name: orderid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/order/properties/id'}
+
+    put:
+      security:
+        - bearerAuth: []
+      tags: 
+        - courier
+      summary: favorite item
+      description: |
+        This endpoint is used to bookmark an article
+      operationId: assignmentCourierItem
+      responses:
+        "200":
+          description: Order assignment to a courier
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/favorite' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+   
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - courier
+      summary: remove assignment to a courier 
+      description: |
+        This endpoint is used to a remove order to a courier
+      operationId: unAssignmentCourierItem
+      responses:
+        "204":
+          description: assignment removed
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/cart/{itemid}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user name
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+
+    put:
+      security:
+        - bearerAuth: []
+      tags: 
+        - cart
+      summary: inser item in cart
+      description: |
+        This endpoint is used to insert item in cart
+      operationId: cartItem
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/item/properties/quantita' }
+      responses:
+        "200":
+          description: Utente bannato con successo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/cart' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/cart/{cartid}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user name
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: cartid
+        in: path
+        required: true
+        description: cart id
+        schema: {$ref: '#/components/schemas/cart/properties/id'}
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - cart
+      summary: return home page
+      operationId: getMyCartPage
+      description: return the cart page. In the home page there are a items.
+      responses:
+        "200": 
+          description: home page retrived.
+          content:
+            application/json:
+              schema: 
+               { $ref: '#/components/schemas/page_cart' }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - cart
+      summary: uncart item
+      description: |
+        This endpoint is used to remove an article to the cart
+      operationId: deleteCart
+      responses:
+        "204":
+          description: item removed
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /delivery/{courierid}/order/{orderid}:
+    parameters: 
+      - name: courierid
+        in: path
+        required: true
+        description: user name
+        schema: {$ref: "#/components/schemas/courier/properties/id"}
+      - name: orderid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/order/properties/id'}
+    put:
+      security:
+        - bearerAuth: []
+      tags: 
+        - courier
+      summary: inser item in order
+      description: |
+        This endpoint is used to insert item in order
+      operationId: addItemOrderCourier
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/item/properties/quantita' }
+      responses:
+        "200":
+          description: Utente bannato con successo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/cart' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /shop/{username}/order/{orderid}/item/{itemid}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user name
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: item id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+      - name: orderid
+        in: path
+        required: true
+        description: order id
+        schema: {$ref: "#/components/schemas/order/properties/id"}
+    put:
+      security:
+        - bearerAuth: []
+      tags: 
+        - order
+      summary: inser item in order
+      description: |
+        This endpoint is used to insert item in order
+      operationId: addItemOrder
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/item/properties/quantita' }
+      responses:
+        "200":
+          description: Utente bannato con successo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/cart' }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+        
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - order
+      summary: remove item to a order
+      description: |
+        This endpoint is used to remove an article to the order
+      operationId: removeItemOrder
+      responses:
+        "204":
+          description: item removed
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/profile:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - user profile
+      summary: return profile
+      operationId: getUserProfile
+      description: return the user profile. In the user profile there are a list of order and name of the user.
+      responses:
+        "200": 
+          description: User profile retrived.
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/user_profile'
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/home_page:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - home page
+      summary: return home page
+      operationId: getMyHomePage
+      description: return the home page. In the home page there are a items.
+      responses:
+        "200": 
+          description: home page retrived.
+          content:
+            application/json:
+              schema: 
+               { $ref: '#/components/schemas/home_page' }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/favorites:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - favorites
+      summary: return favorite page
+      operationId: getMyFavoritePage
+      description: return the favorite page. In the home page there are a items.
+      responses:
+        "200": 
+          description: home page retrived.
+          content:
+            application/json:
+              schema: 
+               { $ref: '#/components/schemas/page_favorite' }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+    
+  /users/{username}/order{orderId}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: orderId
+        in: path
+        required: true
+        description: id order
+        schema: {$ref: "#/components/schemas/order/properties/id"}
+
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - order
+      summary: delete order
+      description: |
+        This endpoint is used to delete an order
+      operationId: deleteOrder
+      responses:
+        "204":
+          description: assignment removed
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /users/{username}/order:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - order
+      summary: return order page
+      operationId: getOrderCourier
+      description: return the order page. In the home page there are a items.
+      responses:
+        "200": 
+          description: order page retrived.
+          content:
+            application/json:
+              schema: 
+               { $ref: '#/components/schemas/order' }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+    post:
+      security:
+        - bearerAuth: []
+      tags: 
+        - order
+      summary: create a new order
+      operationId: newOrder
+      description: create a new order
+      requestBody: 
+        content:
+          application/json: 
+            schema:
+              { $ref: "#/components/schemas/order" }
+      responses:
+        "201":
+          description: order created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/order" }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /shop/{username}/order:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/Shop/properties/id"}
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - order
+      summary: return order page
+      operationId: getOrdineShop
+      description: return the order page. In the home page there are a items.
+      responses:
+        "200": 
+          description: order page retrived.
+          content:
+            application/json:
+              schema: 
+               { $ref: '#/components/schemas/order' }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /delivery/{username}/order:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/courier/properties/id"}
+
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - order
+      summary: return order page
+      operationId: getOrdineCourier
+      description: return the order page. In the home page there are a items.
+      responses:
+        "200": 
+          description: order page retrived.
+          content:
+            application/json:
+              schema: 
+               { $ref: '#/components/schemas/order' }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+  /shop/categories:
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - category
+      summary: return categories page
+      operationId: getCategories
+      description: return the categories page. In the home page there are a category.
+      responses:
+        "200": 
+          description: categories page retrived.
+          content:
+            application/json:
+              schema: 
+                { $ref: '#/components/schemas/categories' }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/UnauthorizedError" }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+    post:
+      security:
+        - bearerAuth: []
+      tags: 
+        - category
+      summary: insert a new category
+      operationId: newCategory
+      description: insert a new category in the system
+      requestBody: 
+        content:
+          application/json: 
+            schema:
+              { $ref: "#/components/schemas/categories" }
+      responses:
+        "201":
+          description: category insert
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/categories" }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+      
+
+  /users/{username}/item/{itemid}/review:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: user username
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: photo id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+    post:
+      security:
+        - bearerAuth: []
+      tags: 
+        - review
+      summary: review item
+      description: |
+        This endpoint is used to put a review
+      operationId: reviewItem
+      requestBody: 
+        content:
+          application/json: 
+            schema:
+              { $ref: "#/components/schemas/reviews" }
+      responses:
+        "201":
+          description: item reviewed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/reviews" }
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+
+  /users/{username}/item/{itemid}/review/{reviewid}:
+    parameters: 
+      - name: username
+        in: path
+        required: true
+        description: User username
+        schema: {$ref: "#/components/schemas/User/properties/id"}
+      - name: itemid
+        in: path
+        required: true
+        description: photo id
+        schema: {$ref: '#/components/schemas/item/properties/id'}
+      - name: reviewid
+        in: path
+        required: true
+        description: comment id
+        schema: {$ref: "#/components/schemas/reviews/properties/id"}
+          
+    delete:
+      security:
+        - bearerAuth: []
+      tags: 
+        - review
+      summary: unReview item
+      description: |
+        This endpoint is used to remove a review.
+      operationId: unReviewItem
+      responses:
+        "204":
+          description: Review removed
+        "400": { $ref: '#/components/responses/BadRequest' }
+        "500": { $ref: "#/components/responses/InternalServerError" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses: 
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    BadRequest:
+      description: The request was not compliant with the documentation (eg. missing fields, etc).
+    InternalServerError:
+      description: The server encountered an internal error. Further info in server logs.
+
+  schemas:
+    User:
+      title: User
+      description: This object represent a single User.
+      type: object
+      properties:
+        id: 
+          description: Unique User identifier.
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        name:
+          description: user name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        lastName:
+          description: user last name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        email:
+          description: user email
+          type: string
+          pattern: '^.*?$'
+          minLength: 10
+          maxLength: 30
+          example: cj3kl
+
+    Admin:
+      title: Admin
+      description: This object represent a single Admin.
+      type: object
+      properties:
+        id: 
+          description: Unique Admin identifier.
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        name:
+          description: Admin name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        lastName:
+          description: admin last name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        email:
+          description: admin email
+          type: string
+          pattern: '^.*?$'
+          minLength: 10
+          maxLength: 30
+          example: cj3kl
+
+    Shop:
+      title: Shop
+      description: This object represent a single Shop.
+      type: object
+      properties:
+        id: 
+          description: Unique Ahop identifier.
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        name:
+          description: shop name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        email:
+          description: shop email
+          type: string
+          pattern: '^.*?$'
+          minLength: 10
+          maxLength: 30
+          example: cj3kl
+
+    methodPayment:
+      title: method payment
+      description: This object represent a mettods payment.
+      type: object
+      properties:
+        id:
+          description: Unique method payment identifier.
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        nmber_card:
+          description: number of the card.
+          type: string
+          pattern: '^.*?$'
+          minLength: 16
+          maxLength: 16
+          example: cj3kl
+        expiration:
+          description: expiration date of the card
+          type: string
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          example: 2024-12-31
+        CVV:
+          description: code behind the card
+          type: string
+          pattern: '^\d{3}$'
+          example: 123
+        nome_titolare:
+          description: Cardholder's Name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+    item:
+      title: item
+      description: This object represent a item to sell.
+      type: object
+      properties:
+        id:
+          description: Unique method payment identifier.
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        name:
+          description: user name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        characteristics:
+          description: characteristics of the item
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 1000
+          example: A beautiful bike
+        price:
+          description: price of the item
+          type: string
+          pattern: '^\d+(\.\d{2})?$'
+          minLength: 3
+          maxLength: 16
+          example: 12,20€
+        sale:
+          description: item discount
+          type: string
+          pattern: '^(\d{1,2}(\.\d{1,2})?|100(\.0{1,2})?)%?$'
+          minLength: 1
+          maxLength: 101
+          example: 10%
+        quantita:
+          description: number of product
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+    favorite:
+      title: favorites
+      description: This object represent a favorite item.
+      type: object
+      properties:
+        personal_user_id:
+          description: unique personal ID
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        item_id:
+          description: unique item ID
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+    cart:
+      title: cart
+      description: This object represent a cart.
+      type: object
+      properties:
+        id:
+          description: unique cart ID
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        personal_user_id:
+          description: unique personal ID
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        item_id:
+          description: unique item ID
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        total_price:
+          description: price of the cart
+          type: string
+          pattern: '^\d+(\.\d{2})?$'
+          minLength: 3
+          maxLength: 16
+          example: 12,20€
+    user_profile:
+      title: cart
+      description: This object represent a cart.
+      type: object
+      properties:
+        name:
+          description: user name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        list_order:
+          description: list of user order
+          type: array
+          items:
+            {$ref: '#/components/schemas/item'}
+          minItems: 0
+          maxItems: 1000
+        
+    home_page:
+      title: home page
+      description: see the home page of the user 
+      type: object
+      properties:
+        name:
+          description: user username
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        list_photos:
+          description: list of item
+          type: array
+          items:
+            {$ref: '#/components/schemas/item'}
+          minItems: 0
+          maxItems: 1000
+
+    page_favorite:
+      title: favorite page
+      description: see the favrite of the user 
+      type: object
+      properties:
+        name:
+          description: user name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        list_favorites:
+            description: list of user favorites
+            type: array
+            items:
+              {$ref: '#/components/schemas/item'}
+            minItems: 0
+            maxItems: 1000
+
+    page_cart:
+      title: page cart
+      description: see the cart of the user 
+      type: object
+      properties:
+        name:
+          description: user name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        list_cart:
+            description: list of user item in the cart
+            type: array
+            items:
+              {$ref: '#/components/schemas/item'}
+            minItems: 0
+            maxItems: 1000
+
+    categories:
+      title: category
+      description: category of the item
+      type: object
+      properties:
+        name:
+          description: user name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        list_item:
+            description: list of user item in the cart
+            type: array
+            items:
+              {$ref: '#/components/schemas/item'}
+            minItems: 0
+            maxItems: 1000
+
+    reviews:
+      title: reviews
+      description: this object represent a reviews of the user
+      type: object
+      properties:
+        id:
+          description: unique review identifier
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        text:
+          description: text of the review
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        personal_user_id:
+          description: unique personal ID
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        item_id:
+          description: unique item ID
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        date:
+          description: date of the review
+          type: string
+          format: date-time
+          example: "2023-11-25T00:00:00Z"
+          minLength: 0
+          maxLength: 20
+        vote:
+          description: vote of the user to a item.
+          type: integer
+          minimum: 0
+          maximum: 5
+          example: 4
+    order:
+      title: order
+      description: this object represent a order of the user
+      type: object
+      properties:
+        id:
+          description: unique review identifier
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        list_item:
+            description: list of user item in the cart
+            type: array
+            items:
+              {$ref: '#/components/schemas/item'}
+            minItems: 0
+            maxItems: 1000
+        total_price:
+          description: price of the order
+          type: string
+          pattern: '^\d+(\.\d{2})?$'
+          minLength: 3
+          maxLength: 16
+          example: 12,20€
+        user_id:
+          description: unique user identifier
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        courier_id:
+          description: unique courier identifier
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+    courier:
+      title: order
+      description: this object represent a order of the user
+      type: object
+      properties:
+        id:
+          description: unique review identifier
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+          readOnly: true
+        name:
+          description: user name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        lastName:
+          description: user last name
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        email:
+          description: user email
+          type: string
+          pattern: '^.*?$'
+          minLength: 10
+          maxLength: 30
+          example: cj3kl
+
+    order_assignment:
+      title: order assignment
+      description: this object represent assignment order to a courier
+      type: object
+      properties:
+        courier_id:
+          description: unique courier identifier
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl
+        order_id:
+          description: unique order identifier
+          type: string
+          pattern: '^.*?$'
+          minLength: 3
+          maxLength: 16
+          example: cj3kl

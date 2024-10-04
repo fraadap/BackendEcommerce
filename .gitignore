@@ -1,0 +1,7 @@
+.vscode/
+obj/
+testdb/obj/
+Temp/
+temp.cpp
+src/build/
+src/db/temp.txt
