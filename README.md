@@ -1,6 +1,6 @@
 # E-commerce Backend Project
 
-This project is a backend system for an e-commerce platform, developed in **C++**. It is designed to efficiently and securely manage the interactions between clients, suppliers, and couriers. The system includes database management, logging, and monitoring to ensure both functional and non-functional properties.
+This project is a backend system for an e-commerce platform, developed in **C++** for a Bachelor Degree course. It is designed to efficiently and securely manage the interactions between clients, suppliers, and couriers. The system includes database management, logging, and monitoring to ensure both functional and non-functional properties.
 
 ## Features
 
